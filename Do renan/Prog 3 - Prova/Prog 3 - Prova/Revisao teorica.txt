@@ -1,0 +1,251 @@
+1. Encapsulamento e importância
+
+Encapsulamento é esconder os detalhes internos de uma classe e expor só o que é necessário por meio de métodos (getters, setters, métodos públicos).
+Importância:
+
+Protege os dados de uso errado (saldo não pode virar negativo do nada).
+
+Facilita manutenção (se a regra interna muda, o resto do sistema não precisa mudar).
+
+Deixa o código mais organizado e modular.
+
+2. Diferença entre classe e objeto
+
+Classe: é o molde/modelo (define atributos e métodos).
+
+Objeto: é uma instância concreta dessa classe (algo real na memória).
+
+class Carro {
+    String modelo;
+    void buzinar() { System.out.println("bi bi"); }
+}
+
+Carro c1 = new Carro();  // objeto
+c1.modelo = "Celta";
+
+
+Carro é a classe, c1 é um objeto.
+
+3. Classe abstrata e por que não pode ser instanciada
+
+Classe abstrata é uma classe que não está completamente implementada (pode ter métodos abstratos, sem corpo).
+Ela não pode ser instanciada porque não faz sentido ter um objeto de algo incompleto.
+
+abstract class Forma {
+    abstract double area();
+}
+
+
+Você cria objetos só das subclasses concretas, por exemplo Circulo que implementa area().
+
+4. Herança e como evita repetição de código
+
+Herança é quando uma classe filha (subclasse) herda atributos e métodos de uma classe pai (superclasse).
+
+Isso evita repetição porque tudo que é comum fica na superclasse.
+
+class Pessoa {
+    String nome;
+    void falar() { System.out.println("Olá!"); }
+}
+
+class Aluno extends Pessoa {
+    String matricula;
+}
+
+
+Aluno já tem nome e falar() herdados de Pessoa, não precisa reescrever.
+
+5. Polimorfismo por sobrescrita
+
+Polimorfismo por sobrescrita é quando uma subclasse dá uma nova implementação para um método da superclasse.
+
+Na prática: você usa uma referência do tipo da superclasse, mas o método executado depende do objeto real.
+
+class Animal {
+    void fazerSom() { System.out.println("Som genérico"); }
+}
+
+class Cachorro extends Animal {
+    @Override
+    void fazerSom() { System.out.println("Au au"); }
+}
+
+Animal a = new Cachorro();
+a.fazerSom();  // imprime "Au au"
+
+6. Modificador super
+
+super é usado para:
+
+Acessar métodos ou atributos da superclasse.
+
+Chamar o construtor da superclasse.
+
+class Pessoa {
+    String nome;
+    Pessoa(String nome) { this.nome = nome; }
+}
+
+class Aluno extends Pessoa {
+    String curso;
+    Aluno(String nome, String curso) {
+        super(nome);     // chama construtor de Pessoa
+        this.curso = curso;
+    }
+}
+
+
+Ou para chamar um método da superclasse que foi sobrescrito:
+
+@Override
+void metodo() {
+    super.metodo(); // versão da superclasse
+}
+
+7. Associação, agregação e composição
+
+Tudo são relacionamentos entre classes, mas com níveis diferentes de dependência.
+
+Associação: uma classe conhece a outra, mas sem “pertencer”.
+Ex.: Professor tem uma referência para Escola, mas cada um pode existir separado.
+
+Agregação: “tem-um”, mas mais fraco; o todo pode existir sem a parte, e a parte sem o todo.
+Ex.: Turma agrega Aluno. Se a Turma acaba, o Aluno continua existindo (está em outra turma, por exemplo).
+
+Composição: “parte-todo” forte; se o todo morre, as partes morrem junto.
+Ex.: Casa e Quarto. Se a Casa deixa de existir, aqueles Quartos também.
+
+Em código (bem simplificado):
+
+class Turma {           // agregação
+    List<Aluno> alunos;
+}
+
+class Casa {            // composição
+    private List<Quarto> quartos = new ArrayList<>();
+}
+
+8. Serialização em Java
+
+Serialização é o processo de transformar um objeto em uma sequência de bytes para salvar em arquivo, enviar pela rede etc.
+É mais útil quando você quer:
+
+Guardar o estado completo de um objeto.
+
+Enviar objetos entre máquinas (sockets, RMI, etc).
+
+class Pessoa implements Serializable {
+    String nome;
+}
+
+9. Diferença entre salvar em arquivo texto e serializar objeto
+
+Arquivo texto: você mesmo decide o formato (CSV, linhas, JSON). Precisa converter os atributos para String na mão e, ao ler, reconstruir o objeto manualmente.
+
+Serialização: o próprio Java já salva e carrega o objeto inteiro, com tipos, valores e, às vezes, até relacionamentos, sem você ter que tratar tudo manualmente. O resultado não é “legível” para humanos (é binário).
+
+10. Papel dos pacotes (package e import)
+
+package: organiza classes em “pastas lógicas”. Ajuda a evitar nomes duplicados e a organizar o projeto.
+
+package br.com.empresa.modelo;
+
+
+import: permite usar classes de outros pacotes sem ter que escrever o nome completo o tempo todo.
+
+import java.util.ArrayList;
+
+
+Isso deixa o projeto organizado e facilita reaproveitar código.
+
+11. Sobrescrita (override) x Sobrecarga (overload)
+
+Sobrescrita (override)
+
+Acontece em herança.
+
+Mesma assinatura (mesmo nome, mesmos parâmetros) na subclasse, mudando o comportamento.
+
+class Animal {
+    void comer() { System.out.println("Animal comendo"); }
+}
+
+class Gato extends Animal {
+    @Override
+    void comer() { System.out.println("Gato comendo ração"); }
+}
+
+
+Sobrecarga (overload)
+
+Na mesma classe.
+
+Mesmo nome, mas parâmetros diferentes (tipo ou quantidade).
+
+class Calculadora {
+    int soma(int a, int b) { return a + b; }
+    int soma(int a, int b, int c) { return a + b + c; }
+}
+
+12. Por que atributos privados + getters/setters?
+
+private protege o dado (ninguém mexe diretamente).
+
+Getters e setters permitem validar e controlar o acesso.
+
+class Conta {
+    private double saldo;
+
+    public double getSaldo() { return saldo; }
+
+    public void depositar(double valor) {
+        if (valor > 0) saldo += valor;
+    }
+}
+
+
+Se saldo fosse público, qualquer um poderia fazer saldo = -1000.
+
+13. Papel dos construtores e exemplo com parâmetros
+
+Construtor é o método especial chamado quando o objeto é criado (new).
+Serve para inicializar o estado do objeto.
+
+class Produto {
+    String nome;
+    double preco;
+
+    Produto(String nome, double preco) {
+        this.nome = nome;
+        this.preco = preco;
+    }
+}
+
+
+Situação prática: ao cadastrar um produto no sistema, você já precisa do nome e do preço. Então faz sentido um construtor com parâmetros:
+
+Produto p = new Produto("Camiseta", 49.90);
+
+14. Swing: janela principal e janelas específicas
+
+Janela principal (geralmente um JFrame): é a base da aplicação, onde o programa começa, configura menu, ícone, tamanho etc.
+
+Janelas específicas (ex.: JanelaLivro, JanelaEmpresa): são telas próprias para certas funcionalidades (cadastrar livro, empresa, cliente). Elas podem ser:
+
+Novos JFrames chamados a partir da principal; ou
+
+JDialogs abertos pela janela principal.
+
+A janela principal coordena a navegação entre essas janelas específicas (por exemplo, menu “Cadastros → Livros” abre JanelaLivro).
+
+15. Para que servem coleções como ArrayList? Exemplo prático
+
+Coleções como ArrayList servem para armazenar listas de objetos com tamanho dinâmico (cresce e diminui), com métodos prontos para adicionar, remover, buscar, percorrer etc.
+
+ArrayList<Aluno> alunos = new ArrayList<>();
+alunos.add(new Aluno("João"));
+alunos.add(new Aluno("Maria"));
+
+
+Exemplo em um sistema OO: em uma classe Turma, você pode ter um ArrayList<Aluno> para guardar todos os alunos daquela turma, percorrer a lista para calcular média da sala, listar alunos, etc.
